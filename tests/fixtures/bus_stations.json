@@ -1,0 +1,127 @@
+{
+ "result": {
+  "items": [
+   {
+    "id": 7,
+    "parentId": null,
+    "domainCode": "11320000",
+    "parentStationCityName": null,
+    "name": "تهران",
+    "isPopular": true,
+    "needVisa": false,
+    "hasSubStations": true,
+    "province": {
+     "id": 1,
+     "name": "استان تهران",
+     "domainCode": "11000000",
+     "displayNames": [
+      {
+       "language": "fa-IR",
+       "value": "تهران"
+      }
+     ]
+    },
+    "country": {
+     "name": "Iran",
+     "domainCode": "IRN",
+     "displayNames": [
+      {
+       "language": "fa-IR",
+       "value": "ایران"
+      },
+      {
+       "language": "en-US",
+       "value": "Iran"
+      }
+     ]
+    },
+    "displayNames": [
+     {
+      "language": "fa-IR",
+      "value": "تهران"
+     },
+     {
+      "language": "en-US",
+      "value": "THR"
+     }
+    ],
+    "subStations": [
+     {
+      "domainCode": "11321007",
+      "name": "پایانه بیهقی",
+      "isPopular": false,
+      "needVisa": false,
+      "displayNames": [
+       {
+        "language": "fa-IR",
+        "value": "تهران - پایانه بیهقی"
+       },
+       {
+        "language": "en-US",
+        "value": "THR1"
+       }
+      ]
+     },
+     {
+      "domainCode": "11321005",
+      "name": "پایانه شرق",
+      "isPopular": false,
+      "needVisa": false,
+      "displayNames": [
+       {
+        "language": "fa-IR",
+        "value": "تهران - پایانه شرق"
+       },
+       {
+        "language": "en-US",
+        "value": "THR3"
+       }
+      ]
+     },
+     {
+      "domainCode": "11321004",
+      "name": "پایانه غرب",
+      "isPopular": false,
+      "needVisa": false,
+      "displayNames": [
+       {
+        "language": "fa-IR",
+        "value": "تهران - پایانه غرب"
+       },
+       {
+        "language": "en-US",
+        "value": "THR4"
+       }
+      ]
+     },
+     {
+      "domainCode": "11321006",
+      "name": "پایانه جنوب",
+      "isPopular": false,
+      "needVisa": false,
+      "displayNames": [
+       {
+        "language": "fa-IR",
+        "value": "تهران - پایانه جنوب"
+       },
+       {
+        "language": "en-US",
+        "value": "THR2"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "totalRecordCount": 1,
+  "totalPageCount": 1,
+  "pageNumber": 1,
+  "pageSize": 10
+ },
+ "targetUrl": null,
+ "success": true,
+ "error": null,
+ "unauthorizedRequest": false,
+ "__wrapped": true,
+ "__traceId": null
+}
