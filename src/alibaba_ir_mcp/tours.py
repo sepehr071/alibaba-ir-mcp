@@ -61,7 +61,7 @@ async def al_tours(
 
     Use for "a 3-night Kish tour for two from Tehran next week". Each result is a hotel with the cheapest package:
     hotel, stars, rating, room, meal plan, how you travel, and the price per person and for the whole group in
-    Toman. Results come in after a few seconds. To buy, send the user to alibaba.ir.
+    Toman. Results come in after a few seconds (at most 15 polls per call). To buy, send the user to alibaba.ir.
     """
     dest = await _tour_place("all-destinations", destination, "destination")
     org = await _tour_place("sources", origin, "origin")

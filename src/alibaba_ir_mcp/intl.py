@@ -112,7 +112,7 @@ async def al_flights_international(
     and the price per adult in Toman (`total_toman` is for the whole group); cheapest first by default. Pass
     return_date for a round trip: each fare then has a `return` leg. Cities and codes come from al_cities with
     international=true (THRALL = all Tehran airports). Charter fares are sold as one fare class. It can take
-    10-20 seconds because airlines answer one by one. To buy, send the user to alibaba.ir.
+    10-20 seconds because airlines answer one by one (at most 12 polls per call). To buy, send the user to alibaba.ir.
     """
     day = parse_day(date)
     back = parse_day(return_date) if return_date else None
