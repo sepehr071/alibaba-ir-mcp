@@ -245,7 +245,9 @@ async def al_trains(
         elif not back:
             continue
         else:
-            out["returning_found"] = total  # 0 = the site lists no train for the way back; else only sold-out ones were hidden
+            out["returning_found"] = (
+                total  # 0 = the site lists no train for the way back; else only sold-out ones were hidden
+            )
         out[key] = _sort(rows, sort)[:limit]
     if back:
         out["return_date"] = back.isoformat()
@@ -436,7 +438,8 @@ async def al_bus_seats(
     cands = [
         b
         for b in (await _bus_search(oc, dc, day)).get("availableList") or []
-        if b["departureDateTime"][11:16] == want and (not company or _norm(_clean(company)) in _norm(_clean(b["companyName"])))
+        if b["departureDateTime"][11:16] == want
+        and (not company or _norm(_clean(company)) in _norm(_clean(b["companyName"])))
     ]
     if not cands:
         raise ApiError(f"No bus leaves {oname} for {dname} at {want} on {day.isoformat()}. Call al_buses first.")
