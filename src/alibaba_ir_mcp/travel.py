@@ -244,6 +244,8 @@ async def al_trains(
             out.update(found=total, available=len(rows))
         elif not back:
             continue
+        else:
+            out["returning_found"] = total  # 0 = the site lists no train for the way back; else only sold-out ones were hidden
         out[key] = _sort(rows, sort)[:limit]
     if back:
         out["return_date"] = back.isoformat()
@@ -417,7 +419,7 @@ async def al_bus_seats(
     company: Annotated[
         str | None,
         Field(
-            description="Part of the company name, to pick one when several buses leave at that time.", max_length=40
+            description="Part of the company name, to pick one when several buses leave at that time.", max_length=120
         ),
     ] = None,
 ) -> dict[str, Any]:
@@ -434,7 +436,7 @@ async def al_bus_seats(
     cands = [
         b
         for b in (await _bus_search(oc, dc, day)).get("availableList") or []
-        if b["departureDateTime"][11:16] == want and (not company or _norm(company) in _norm(b["companyName"]))
+        if b["departureDateTime"][11:16] == want and (not company or _norm(_clean(company)) in _norm(_clean(b["companyName"])))
     ]
     if not cands:
         raise ApiError(f"No bus leaves {oname} for {dname} at {want} on {day.isoformat()}. Call al_buses first.")
