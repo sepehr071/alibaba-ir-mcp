@@ -1,6 +1,6 @@
 [project]
 name = "alibaba-ir-mcp"
-version = "0.1.2"
+version = "0.2.0"
 description = "Unofficial read-only MCP server for Alibaba (alibaba.ir), the Iranian travel site: train, bus, domestic and international flight, hotel, villa and tour search with prices and availability."
 readme = "README.md"
 license = "MIT"
