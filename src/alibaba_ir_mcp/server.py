@@ -16,19 +16,10 @@ Unofficial, read-only access to Alibaba (علی\u200cبابا, alibaba.ir), the 
 train, bus, flight, hotel, villa and tour listings its web app shows to anyone without an account. Nothing here can
 log in, book, hold seats or pay.
 
-Tools: al_cities (city names -> codes such as THR, MHD; international=true for airports worldwide), al_trains
-(trains on one day, round trip, class and compartment details, seats left), al_trains_cheapest (lowest train price
-per day), al_buses (intercity buses on one day), al_buses_cheapest (lowest bus price per day), al_bus_seats (free
-seats of one bus), al_flights (domestic flights, round trip, group fares, refund fees), al_flights_cheapest
-(lowest domestic fare per day), al_flights_international (flights to and from abroad, round trip, stops, baggage),
-al_stays (villas, suites and holiday homes to rent in a city), al_stay_detail (one such place: rules, amenities,
-nightly price calendar, reviews), al_hotels (hotels in a city, domestic and abroad), al_tours (tour packages with
-flight and hotel, e.g. Kish, Mashhad, Istanbul, Dubai), al_tours_cheapest (lowest tour price per day around a date).
-
-Typical flows: "trains from Tehran to Mashhad next Thursday" -> al_trains. "Cheapest day to fly Tehran-Shiraz this
-week" -> al_flights_cheapest, then al_flights for that day. "Bus to Isfahan tonight" -> al_buses. "Flights to Dubai
-on 2026-11-20 and back on the 25th" -> al_flights_international with return_date. "Villa in Masuleh for 6 people
-this weekend" -> al_stays, then al_stay_detail. "Hotel in Mashhad for 2 nights" -> al_hotels. Cities are given by
+Flows: city names -> al_cities (codes THR, MHD; international=true for airports worldwide). Flexible date ->
+al_*_cheapest (trains, buses, flights, tours: lowest price per day), then the search tool for that day: al_trains,
+al_buses (+ al_bus_seats), al_flights, al_flights_international (abroad), al_tours. Villa: al_stays, then
+al_stay_detail. Hotel: al_hotels. Cities are given by
 name (تهران, Mashhad) or code; use al_cities when unsure. Dates are Gregorian 2026-11-11 or Jalali 1405-08-20.
 Prices are Toman (the site shows Toman); per adult for transport, for the whole stay for hotels, villas and tours
 (each result says which). seats_left 0 means sold out. Times are Iran local time.

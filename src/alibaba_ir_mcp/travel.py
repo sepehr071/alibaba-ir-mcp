@@ -17,7 +17,7 @@ from .registry import tool
 Place = Annotated[
     str,
     Field(
-        description="City name in Persian or English (تهران, Mashhad) or its code (THR, MHD); al_cities lists them.",
+        description="City name (تهران, Mashhad) or code (THR); see al_cities.",
         min_length=2,
         max_length=40,
     ),
@@ -25,9 +25,9 @@ Place = Annotated[
 _DAY = r"^\d{4}[-/]\d{1,2}[-/]\d{1,2}$"
 Day = Annotated[
     str,
-    Field(description="Travel date, Gregorian 2026-11-11 or Jalali 1405-08-20 (the year tells which).", pattern=_DAY),
+    Field(description="Gregorian 2026-11-11 or Jalali 1405-08-20.", pattern=_DAY),
 ]
-Limit = Annotated[int, Field(description="Maximum number of results.", ge=1, le=60)]
+Limit = Annotated[int, Field(description="Max results.", ge=1, le=60)]
 
 
 def _load(name: str) -> list[list[str]]:
@@ -135,22 +135,18 @@ async def intl_places(query: str) -> list[dict[str, Any]]:
 @tool("City and airport codes")
 async def al_cities(
     query: Annotated[
-        str, Field(description="Part of a city name in Persian or English, or a code. Empty lists all.", max_length=40)
+        str, Field(description="Part of a city name (Persian/English) or code; empty lists all.", max_length=40)
     ] = "",
     limit: Limit = 30,
     international: Annotated[
         bool,
-        Field(
-            description="Look up airports and cities worldwide for al_flights_international instead of Iranian cities."
-        ),
+        Field(description="Search airports worldwide (for al_flights_international) instead of Iranian cities."),
     ] = False,
 ) -> dict[str, Any]:
     """Look up the city codes the other tools take (THR for Tehran, MHD for Mashhad) and what is sold for each city.
 
-    Use first when the user names a city: pass the returned `code` to al_trains, al_buses or al_flights.
-    `train` is true for cities with a station, `flight` for cities with a domestic airport. Buses use the same
-    codes (a tiny train stop may have no buses). With international=true it searches the whole world (Dubai,
-    Istanbul, Paris) and returns airports; `whole_city` rows (code ending in ALL) cover every airport of a city.
+    `train`/`flight` say a city has a station/domestic airport. With international=true it returns airports
+    worldwide; `whole_city` rows (code ending in ALL) cover all airports of a city.
     """
     if international:
         if not query.strip():
@@ -177,41 +173,27 @@ async def al_trains(
     origin: Place,
     destination: Place,
     date: Day,
-    sort: Annotated[
-        Literal["price", "departure", "duration"], Field(description="Order of the results.")
-    ] = "departure",
+    sort: Annotated[Literal["price", "departure", "duration"], Field(description="Sort order.")] = "departure",
     only_available: Annotated[bool, Field(description="Hide sold-out trains.")] = True,
     limit: Limit = 25,
     return_date: Annotated[
         str | None,
-        Field(
-            description="Return day for a round trip (same formats as `date`); adds a `returning` list.", pattern=_DAY
-        ),
+        Field(description="Round-trip return day; adds `returning`.", pattern=_DAY),
     ] = None,
-    passengers: Annotated[
-        int, Field(description="Number of travellers; seats_left is for this group size.", ge=1, le=9)
-    ] = 1,
+    passengers: Annotated[int, Field(description="Travellers; seats_left is for this group size.", ge=1, le=9)] = 1,
     ticket_type: Annotated[
         Literal["family", "female", "male"],
-        Field(
-            description="family = mixed compartments; female or male = single-gender compartments (seat counts differ)."
-        ),
+        Field(description="family = mixed compartments; female/male = single-gender (seat counts differ)."),
     ] = "family",
     wagon_class: Annotated[
         str | None,
-        Field(
-            description="Keep only this class code from the results, e.g. EC (compartment), EL (6-berth), S (saloon), V.",
-            max_length=3,
-        ),
+        Field(description="Keep only this class_code: EC (4-berth), EL (6-berth), S (saloon), V.", max_length=3),
     ] = None,
 ) -> dict[str, Any]:
     """Search train tickets between two Iranian cities on one day: company, class, times, price and seats left.
 
-    Use for "trains from Tehran to Mashhad on 1405-08-20". Prices are Toman per adult. `seats_left` 0 means sold out.
-    `class` is the wagon name (stars, berths, meals) and `class_code` its type: S saloon seats, EC 4-berth
-    compartment, EL 6-berth compartment, V special. Pass return_date for the way back. Call al_trains_cheapest to
-    compare prices over the following days. While the rail suppliers are in their maintenance window (usually
-    after midnight) the site answers with an error; try again in a few minutes.
+    Prices are Toman per adult. `seats_left` 0 means sold out. Pass return_date for the way back. For a flexible
+    date call al_trains_cheapest first. After midnight the rail suppliers may be down; retry later.
     """
     o = find_place(TRAIN_CITIES, origin, "train city")
     d = find_place(TRAIN_CITIES, destination, "train city")
@@ -285,11 +267,11 @@ async def al_trains_cheapest(
     origin: Place,
     destination: Place,
     date: Day,
-    days: Annotated[int, Field(description="How many days to list, starting at `date`.", ge=1, le=15)] = 7,
+    days: Annotated[int, Field(description="Days to list from `date`.", ge=1, le=15)] = 7,
 ) -> dict[str, Any]:
     """List the lowest train price for each day from a start date, to pick the cheapest day to travel.
 
-    Use before al_trains when the date is flexible. Prices are Toman per adult; a missing day has no train.
+    Toman per adult; a missing day has no train.
     """
     o = find_place(TRAIN_CITIES, origin, "train city")
     d = find_place(TRAIN_CITIES, destination, "train city")
@@ -316,14 +298,13 @@ async def al_buses(
     origin: Place,
     destination: Place,
     date: Day,
-    sort: Annotated[Literal["price", "departure"], Field(description="Order of the results.")] = "departure",
+    sort: Annotated[Literal["price", "departure"], Field(description="Sort order.")] = "departure",
     only_available: Annotated[bool, Field(description="Hide buses with no free seat.")] = True,
     limit: Limit = 25,
 ) -> dict[str, Any]:
     """Search intercity bus tickets between two Iranian cities on one day: company, bus type, times, price, seats.
 
-    Use for "buses from Tehran to Shiraz tomorrow". Prices are Toman per adult. `from_terminal` is the terminal of
-    that departure (Tehran has several). Bus tickets carry no arrival time on the site.
+    Toman per adult. No arrival time is available. `from_terminal` matters in cities with several terminals.
     """
     (oc, oname), (dc, dname) = await bus_city_code(origin), await bus_city_code(destination)
     day = parse_day(date)
@@ -378,12 +359,11 @@ async def al_buses_cheapest(
     origin: Place,
     destination: Place,
     date: Day,
-    days: Annotated[int, Field(description="How many days to check, starting at `date`.", ge=1, le=10)] = 5,
+    days: Annotated[int, Field(description="Days to check from `date`.", ge=1, le=10)] = 5,
 ) -> dict[str, Any]:
     """List the lowest bus price and the number of buses for each day from a start date (the site has no bus calendar).
 
-    Use before al_buses when the date is flexible. It runs one search per day, so keep `days` small. Prices are
-    Toman per adult for buses with a free seat; a day with none shows no price.
+    One search per day, so keep `days` small. Toman per adult, buses with a free seat only.
     """
     (oc, oname), (dc, dname) = await bus_city_code(origin), await bus_city_code(destination)
     first = parse_day(date)
@@ -415,21 +395,15 @@ async def al_bus_seats(
     origin: Place,
     destination: Place,
     date: Day,
-    departure_time: Annotated[
-        str, Field(description="Departure time of the bus from al_buses, HH:MM.", pattern=r"^\d{1,2}:\d{2}$")
-    ],
+    departure_time: Annotated[str, Field(description="HH:MM from al_buses.", pattern=r"^\d{1,2}:\d{2}$")],
     company: Annotated[
         str | None,
-        Field(
-            description="Part of the company name, to pick one when several buses leave at that time.", max_length=120
-        ),
+        Field(description="Part of the company name, when several buses leave at that time.", max_length=120),
     ] = None,
 ) -> dict[str, Any]:
     """Show which seats are free on one bus: counts per status and the free seat numbers (no booking).
 
-    Use after al_buses when the user cares where they sit or asks how full a bus is. Pick the bus by its departure
-    time (and company). `layout` gives each seat's row and column (columns 1-2 left of the aisle, 4-5 right) so
-    pairs can be found; statuses mean Available, booked for a male or female passenger, or Blocked (not for sale).
+    Use after al_buses. `layout` gives each free seat's row/column (columns 1-2 left of the aisle, 4-5 right).
     """
     (oc, oname), (dc, dname) = await bus_city_code(origin), await bus_city_code(destination)
     day = parse_day(date)
@@ -471,28 +445,24 @@ async def al_flights(
     origin: Place,
     destination: Place,
     date: Day,
-    sort: Annotated[Literal["price", "departure"], Field(description="Order of the results.")] = "departure",
+    sort: Annotated[Literal["price", "departure"], Field(description="Sort order.")] = "departure",
     only_available: Annotated[bool, Field(description="Hide fares with no seat left.")] = True,
     limit: Limit = 25,
     return_date: Annotated[
         str | None,
-        Field(
-            description="Return day for a round trip (same formats as `date`); adds a `returning` list.", pattern=_DAY
-        ),
+        Field(description="Round-trip return day; adds `returning`.", pattern=_DAY),
     ] = None,
-    adults: Annotated[int, Field(description="Number of adults.", ge=1, le=9)] = 1,
-    children: Annotated[int, Field(description="Number of children (2-11); their fare is lower.", ge=0, le=9)] = 0,
-    infants: Annotated[int, Field(description="Number of infants under 2 (one per adult at most).", ge=0, le=9)] = 0,
+    adults: Annotated[int, Field(description="Adults.", ge=1, le=9)] = 1,
+    children: Annotated[int, Field(description="Children aged 2-11.", ge=0, le=9)] = 0,
+    infants: Annotated[int, Field(description="Infants under 2 (max one per adult).", ge=0, le=9)] = 0,
     refund_rules: Annotated[
-        bool, Field(description="Add `refund_penalties` (cancellation fee by time before departure) to each fare.")
+        bool, Field(description="Add `refund_penalties` (cancellation fee table) to each fare.")
     ] = False,
 ) -> dict[str, Any]:
     """Search domestic flights between two Iranian airports on one day: airline, flight number, times, fare, seats.
 
-    Use for "flights from Tehran to Shiraz on 2026-11-12". Prices are Toman per adult (`child_price_toman` and
-    `infant_price_toman` for the others); one flight can appear several times with different fare classes. Pass
-    return_date for a round trip, refund_rules for the cancellation fee table, adults/children/infants for a
-    group. For other days call al_flights_cheapest first. For flights abroad use al_flights_international.
+    Toman per adult (`child_price_toman`, `infant_price_toman` for the others); a flight repeats per fare class.
+    For a flexible date call al_flights_cheapest first. Abroad: al_flights_international.
     """
     o = find_place(AIRPORTS, origin, "airport city")
     d = find_place(AIRPORTS, destination, "airport city")
@@ -559,11 +529,11 @@ async def al_flights_cheapest(
     origin: Place,
     destination: Place,
     date: Day,
-    days: Annotated[int, Field(description="How many days to list, starting at `date`.", ge=1, le=15)] = 7,
+    days: Annotated[int, Field(description="Days to list from `date`.", ge=1, le=15)] = 7,
 ) -> dict[str, Any]:
     """List the lowest domestic fare for each day from a start date, to pick the cheapest day to fly.
 
-    Use before al_flights when the date is flexible. Prices are Toman per adult; a day with no flight is missing.
+    Toman per adult; a day with no flight is missing.
     """
     o = find_place(AIRPORTS, origin, "airport city")
     d = find_place(AIRPORTS, destination, "airport city")

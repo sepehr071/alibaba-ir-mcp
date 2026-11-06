@@ -15,7 +15,7 @@ from .travel import _DAY, Day, Limit, _sort, _toman, intl_places, parse_day
 Airport = Annotated[
     str,
     Field(
-        description="City or airport as a name (تهران, Dubai) or code (THR, DXB, THRALL for all airports of Tehran).",
+        description="City/airport name (تهران, Dubai) or code (DXB, THRALL = all Tehran airports).",
         min_length=2,
         max_length=40,
     ),
@@ -90,29 +90,20 @@ async def al_flights_international(
     origin: Airport,
     destination: Airport,
     date: Day,
-    return_date: Annotated[
-        str | None, Field(description="Return day for a round trip (same formats as `date`).", pattern=_DAY)
-    ] = None,
-    adults: Annotated[int, Field(description="Number of adults.", ge=1, le=9)] = 1,
-    children: Annotated[int, Field(description="Number of children (2-11).", ge=0, le=9)] = 0,
-    infants: Annotated[int, Field(description="Number of infants under 2.", ge=0, le=9)] = 0,
+    return_date: Annotated[str | None, Field(description="Round-trip return day.", pattern=_DAY)] = None,
+    adults: Annotated[int, Field(description="Adults.", ge=1, le=9)] = 1,
+    children: Annotated[int, Field(description="Children aged 2-11.", ge=0, le=9)] = 0,
+    infants: Annotated[int, Field(description="Infants under 2.", ge=0, le=9)] = 0,
     cabin: Annotated[Literal["economy", "business", "first"], Field(description="Cabin class.")] = "economy",
-    sort: Annotated[Literal["price", "departure", "duration"], Field(description="Order of the results.")] = "price",
-    max_stops: Annotated[
-        int | None, Field(description="Keep only itineraries with at most this many stops (0 = direct).", ge=0, le=3)
-    ] = None,
-    airline: Annotated[
-        str | None, Field(description="Part of an airline name to keep, e.g. 'Turkish', 'ماهان'.", max_length=30)
-    ] = None,
+    sort: Annotated[Literal["price", "departure", "duration"], Field(description="Sort order.")] = "price",
+    max_stops: Annotated[int | None, Field(description="Max stops (0 = direct).", ge=0, le=3)] = None,
+    airline: Annotated[str | None, Field(description="Part of an airline name, e.g. 'Turkish'.", max_length=30)] = None,
     limit: Limit = 15,
 ) -> dict[str, Any]:
     """Search international flights between Iran and abroad (or any two cities Alibaba sells) on one day.
 
-    Use for "flights from Tehran to Istanbul on 2026-11-16". Returns airline, flight numbers, times, stops, baggage
-    and the price per adult in Toman (`total_toman` is for the whole group); cheapest first by default. Pass
-    return_date for a round trip: each fare then has a `return` leg. Cities and codes come from al_cities with
-    international=true (THRALL = all Tehran airports). Charter fares are sold as one fare class. It can take
-    10-20 seconds because airlines answer one by one (at most 12 polls per call). To buy, send the user to alibaba.ir.
+    `price_toman` is per adult, `total_toman` for the whole group. With return_date each fare has a `return` leg.
+    Codes: al_cities with international=true. Takes 10-20 seconds.
     """
     day = parse_day(date)
     back = parse_day(return_date) if return_date else None

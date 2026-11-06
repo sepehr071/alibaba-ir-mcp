@@ -37,31 +37,21 @@ async def _tour_place(kind: Literal["sources", "all-destinations"], q: str, what
 async def al_tours(
     destination: Annotated[
         str,
-        Field(
-            description="Destination city in Persian or English: کیش, Mashhad, استانبول, Dubai.",
-            min_length=2,
-            max_length=40,
-        ),
+        Field(description="Destination city: کیش, Mashhad, Dubai.", min_length=2, max_length=40),
     ],
     checkin: Day,
     nights: Nights = 3,
-    origin: Annotated[
-        str,
-        Field(description="Departure city, tours start from Tehran, Isfahan, Mashhad and a few more.", max_length=40),
-    ] = "تهران",
-    adults: Annotated[
-        int, Field(description="Travellers sharing one room (the price is for the whole group).", ge=1, le=4)
-    ] = 2,
-    min_stars: Annotated[int | None, Field(description="Lowest hotel star rating to keep, 1-5.", ge=1, le=5)] = None,
-    max_price: Annotated[int | None, Field(description="Highest price per person in Toman.", ge=0)] = None,
-    sort: Annotated[Literal["price", "rating", "stars"], Field(description="Order of the results.")] = "price",
+    origin: Annotated[str, Field(description="Departure city.", max_length=40)] = "تهران",
+    adults: Annotated[int, Field(description="Travellers sharing one room.", ge=1, le=4)] = 2,
+    min_stars: Annotated[int | None, Field(description="Min hotel stars, 1-5.", ge=1, le=5)] = None,
+    max_price: Annotated[int | None, Field(description="Max price per person, Toman.", ge=0)] = None,
+    sort: Annotated[Literal["price", "rating", "stars"], Field(description="Sort order.")] = "price",
     limit: Limit = 15,
 ) -> dict[str, Any]:
     """Search tour packages (round trip plus hotel) from a city to a destination such as Kish, Mashhad, Istanbul or Dubai.
 
-    Use for "a 3-night Kish tour for two from Tehran next week". Each result is a hotel with the cheapest package:
-    hotel, stars, rating, room, meal plan, how you travel, and the price per person and for the whole group in
-    Toman. Results come in after a few seconds (at most 15 polls per call). To buy, send the user to alibaba.ir.
+    Each result is a hotel with its cheapest package; prices in Toman per person and for the group. Takes a few
+    seconds.
     """
     dest = await _tour_place("all-destinations", destination, "destination")
     org = await _tour_place("sources", origin, "origin")
@@ -112,22 +102,15 @@ async def al_tours(
 async def al_tours_cheapest(
     destination: Annotated[
         str,
-        Field(
-            description="Destination city in Persian or English: کیش, Mashhad, استانبول, Dubai.",
-            min_length=2,
-            max_length=40,
-        ),
+        Field(description="Destination city: کیش, Mashhad, Dubai.", min_length=2, max_length=40),
     ],
     checkin: Day,
     nights: Nights = 3,
-    origin: Annotated[
-        str, Field(description="Departure city (Tehran, Isfahan, Mashhad and a few more).", max_length=40)
-    ] = "تهران",
+    origin: Annotated[str, Field(description="Departure city.", max_length=40)] = "تهران",
 ) -> dict[str, Any]:
     """List the lowest tour price per person for 11 departure days around a date (5 before, 5 after), to pick the cheapest day.
 
-    Use before al_tours when the date is flexible. Prices are Toman per person for a tour of `nights` nights; a day
-    without tours is missing. Then call al_tours for the chosen day.
+    Toman per person for `nights` nights; a day without tours is missing. Then call al_tours.
     """
     dest = await _tour_place("all-destinations", destination, "destination")
     org = await _tour_place("sources", origin, "origin")
