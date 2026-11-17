@@ -11,7 +11,7 @@ show bus seat maps and find the cheapest day to travel. No API key or Alibaba ac
 [![PyPI](https://img.shields.io/pypi/v/alibaba-ir-mcp?color=2563eb)](https://pypi.org/project/alibaba-ir-mcp/)
 [![Python](https://img.shields.io/pypi/pyversions/alibaba-ir-mcp)](https://pypi.org/project/alibaba-ir-mcp/)
 [![CI](https://github.com/sepehr071/alibaba-ir-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/sepehr071/alibaba-ir-mcp/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-16a34a)](https://github.com/sepehr071/alibaba-ir-mcp/blob/main/LICENSE)
+[![License: PolyForm Noncommercial](https://img.shields.io/badge/license-PolyForm%20Noncommercial-c2410c)](https://github.com/sepehr071/alibaba-ir-mcp/blob/main/LICENSE)
 
 [For AI agents](#for-ai-agents) · [Quick start](#quick-start) · [Tools](#tools) · [FAQ](#faq) · [فارسی](#فارسی)
 
@@ -77,6 +77,12 @@ after midnight Tehran time. The site shows the same message; try again in a few 
 ## فارسی
 
 سرور MCP غیررسمی و فقط‌خواندنی برای علی‌بابا (alibaba.ir): جستجوی قطار، اتوبوس، پرواز داخلی و خارجی، هتل، ویلا و تور با قیمت و ظرفیت، نقشه صندلی اتوبوس و ارزان‌ترین روز سفر.
-نصب: `uvx alibaba-ir-mcp`. قیمت‌ها به تومان و تاریخ‌ها به شمسی (۱۴۰۵-۰۸-۲۰) یا میلادی پذیرفته می‌شود. خرید بلیت از طریق این ابزار ممکن نیست.
+نصب: `uvx alibaba-ir-mcp`. قیمت‌ها به تومان و تاریخ‌ها به شمسی (۱۴۰۵-۰۸-۲۰) یا میلادی پذیرفته می‌شود. خرید بلیت از طریق این ابزار ممکن نیست. Sepehr Radmard (سپهر رادمرد): github.com/sepehr071
 
-MIT License. Sepehr Radmard (سپهر رادمرد): github.com/sepehr071
+## مجوز استفاده (License)
+
+<a href="https://www.linkedin.com/in/sepehr-radmard"><img src="https://raw.githubusercontent.com/sepehr071/iran-mcp/main/assets/license-banner.png" alt="استفادهٔ شخصی و غیرتجاری رایگان است؛ برای استفادهٔ تجاری با سپهر رادمرد تماس بگیرید. Free for personal and non-commercial use; commercial use needs a license." width="100%"></a>
+
+**استفادهٔ شخصی و غیرتجاری رایگان است.** استفاده در شرکت، محصول پولی یا پروژهٔ مشتری به مجوز تجاری نیاز دارد؛ از راه [لینکدین](https://www.linkedin.com/in/sepehr-radmard) یا [گیت&zwnj;هاب](https://github.com/sepehr071) با سپهر رادمرد تماس بگیرید. متن کامل: [PolyForm Noncommercial 1.0.0](https://github.com/sepehr071/alibaba-ir-mcp/blob/main/LICENSE). نسخه&zwnj;های پیش از 0.2.1 با مجوز MIT منتشر شده&zwnj;اند و همان مجوز را دارند.
+
+Free for personal and non-commercial use under the [PolyForm Noncommercial License 1.0.0](https://github.com/sepehr071/alibaba-ir-mcp/blob/main/LICENSE). Using it in a company, a paid product or a client project needs a commercial license: contact Sepehr Radmard on [LinkedIn](https://www.linkedin.com/in/sepehr-radmard) or [GitHub](https://github.com/sepehr071). Versions before 0.2.1 were released under MIT and stay under it.
